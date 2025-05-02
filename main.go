@@ -10,7 +10,12 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(config *cliConfig) error
+}
+
+type cliConfig struct {
+	Next     string
+	Previous string
 }
 
 var commands = map[string]cliCommand{
@@ -23,6 +28,11 @@ var commands = map[string]cliCommand{
 		name:        "map",
 		description: "Lists all locations in the Pokemon world",
 		callback:    commandMap,
+	},
+	"mapb": {
+		name:        "map back",
+		description: "Displays the previous 20 locations shown",
+		callback:    commandMapb,
 	},
 }
 
@@ -37,6 +47,10 @@ func init() {
 func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
+	userconfig := cliConfig{
+		Previous: "",
+		Next:     "",
+	}
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -53,7 +67,9 @@ func main() {
 			continue
 		}
 
-		err := output.callback()
+		fmt.Println()
+
+		err := output.callback(&userconfig)
 		if err != nil {
 			fmt.Println("Unknown Command")
 			continue
@@ -69,13 +85,13 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func commandExit() error {
+func commandExit(config *cliConfig) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(config *cliConfig) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Printf("# of CMDs: %d\n", len(commands))
@@ -86,6 +102,33 @@ func commandHelp() error {
 	return nil
 }
 
-func commandMap() error {
+func commandMap(config *cliConfig) error {
+	locations, prev, next, err := getLocationNames(config.Next)
+	if err != nil {
+		return err
+	}
+
+	config.Previous = prev
+	config.Next = next
+
+	for _, location := range locations {
+		fmt.Println(location)
+	}
+
+	return nil
+}
+
+func commandMapb(config *cliConfig) error {
+	locations, prev, next, err := getLocationNames(config.Previous)
+	if err != nil {
+		return err
+	}
+
+	config.Previous = prev
+	config.Next = next
+
+	for _, location := range locations {
+		fmt.Println(location)
+	}
 	return nil
 }
