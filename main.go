@@ -40,37 +40,6 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-// var commands = map[string]cliCommand{
-// 	"exit": {
-// 		name:        "exit",
-// 		description: "Exit the Pokedex",
-// 		callback:    commandExit,
-// 	},
-// 	"map": {
-// 		name:        "map",
-// 		description: "Lists all locations in the Pokemon world",
-// 		callback:    commandMap,
-// 	},
-// 	"mapb": {
-// 		name:        "map back",
-// 		description: "Displays the previous 20 locations shown",
-// 		callback:    commandMapb,
-// 	},
-// 	"help": cliCommand{
-// 		name:        "help",
-// 		description: "Displays all commands",
-// 		callback:    commandHelp,
-// 	},
-// }
-
-// func init() {
-// 	commands["help"] = cliCommand{
-// 		name:        "help",
-// 		description: "Displays all commands",
-// 		callback:    commandHelp,
-// 	}
-// }
-
 func main() {
 
 	client := pokeapi.NewClient()

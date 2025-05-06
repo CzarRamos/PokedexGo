@@ -16,6 +16,7 @@ func (c CliConfig) GetLocationNames(url string) (ResLocations, error) {
 		url = _pokeAPIURL + _locations
 	}
 
+	// find if we have already have existing data
 	existingData, found := c.CachedInfo.Get(url)
 	if found {
 		resLocations := ResLocations{}
@@ -25,6 +26,7 @@ func (c CliConfig) GetLocationNames(url string) (ResLocations, error) {
 		}
 		return resLocations, nil
 	}
+
 	fmt.Println("CONNECTING...")
 	res, err := http.Get(url)
 	if err != nil {
@@ -43,7 +45,7 @@ func (c CliConfig) GetLocationNames(url string) (ResLocations, error) {
 		return ResLocations{}, err
 	}
 
-	//add
+	//add info to cache
 	c.CachedInfo.Add(url, jsonRaw)
 
 	return resLocations, nil
