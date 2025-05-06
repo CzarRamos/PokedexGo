@@ -16,7 +16,10 @@ type Cache struct {
 }
 
 func NewCache(interval time.Duration) Cache {
-	cache := Cache{make(map[string]cacheEntry), &sync.RWMutex{}}
+	cache := Cache{
+		make(map[string]cacheEntry),
+		&sync.RWMutex{},
+	}
 
 	go cache.reapLoop(interval)
 

@@ -92,3 +92,40 @@ func (c CliConfig) GetPokemonInArea(area string) (ResExplore, error) {
 
 	return resExplore, nil
 }
+
+func (c CliConfig) GetPokemon(pokemonName string) (ResPokemon, error) {
+	url := _pokeAPIURL + "/pokemon/" + pokemonName
+
+	// find if we have already have existing data
+	existingData, found := c.CachedInfo.Get(url)
+	if found {
+		resPokemon := ResPokemon{}
+		err := json.Unmarshal(existingData, &resPokemon)
+		if err != nil {
+			return ResPokemon{}, err
+		}
+		return resPokemon, nil
+	}
+
+	res, err := http.Get(url)
+	if err != nil {
+		return ResPokemon{}, fmt.Errorf("cannot connect to %s", url)
+	}
+	defer res.Body.Close()
+
+	jsonRaw, err := io.ReadAll(res.Body)
+	if err != nil {
+		return ResPokemon{}, fmt.Errorf("cannot read content")
+	}
+
+	resPokemon := ResPokemon{}
+	err = json.Unmarshal(jsonRaw, &resPokemon)
+	if err != nil {
+		return ResPokemon{}, fmt.Errorf("i do not know what a %s is", pokemonName)
+	}
+
+	//add info to cache
+	c.CachedInfo.Add(url, jsonRaw)
+
+	return resPokemon, nil
+}
