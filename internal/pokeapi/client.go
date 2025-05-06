@@ -20,7 +20,7 @@ func NewClient() Client {
 	return Client{
 		httpClient: *http.DefaultClient,
 		Config: CliConfig{
-			CachedInfo: NewCache(5 * time.Millisecond),
+			CachedInfo: NewCache(5 * time.Second),
 		},
 	}
 }
